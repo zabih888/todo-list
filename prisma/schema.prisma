@@ -13,3 +13,24 @@ model User {
   name      String?
   createdAt DateTime @default(now())
 }
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // 1-to-many: one category can have many tasks
+  tasks     Task[]
+}
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  done        Boolean   @default(false)
+  // categoryId is optional; a task may be uncategorised
+  categoryId  Int?      
+  category    Category? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
