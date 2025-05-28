@@ -15,10 +15,6 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  // create(data: CreateUserDto) {
-  //   return this.prisma.user.create({ data });
-  // }
-
   update(id: number, data: UpdateUserDto) {
     return this.prisma.user.update({
       where: {
@@ -36,7 +32,7 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  async createUser(data: { email: string; password: string; name?: string }) {
+  async create(data: { email: string; password: string; name?: string }) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     return this.prisma.user.create({
       data: {
@@ -45,5 +41,31 @@ export class UsersService {
         password: hashedPassword,
       },
     });
+  }
+
+  async setRefreshToken(userId: number, token: string) {
+    const hashedToken = await bcrypt.hash(token, 10);
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { hashedRefreshToken: hashedToken },
+    });
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { hashedRefreshToken: null },
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(userId: number, refreshToken: string) {
+    const user = await this.findOne(userId);
+    if (!user || !user.hashedRefreshToken) return null;
+
+    const isMatch = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
+    if (isMatch) {
+      return user;
+    }
+    return null;
   }
 }
