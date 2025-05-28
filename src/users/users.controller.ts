@@ -26,10 +26,10 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  create(@Body() dto: CreateUserDto) {
-    return this.usersService.create(dto);
-  }
+  // @Post()
+  // create(@Body() dto: CreateUserDto) {
+  //   return this.usersService.create(dto);
+  // }
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
