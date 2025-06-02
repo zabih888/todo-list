@@ -7,16 +7,25 @@ import { UpdateTaskDto } from './dto/update-tasks.dto';
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.task.findMany();
+  findAll(userId: number) {
+    return this.prisma.task.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
   findOne(id: number) {
     return this.prisma.task.findUnique({ where: { id } });
   }
 
-  create(data: CreateTaskDto) {
-    return this.prisma.task.create({ data });
+  create(userId, data: CreateTaskDto) {
+    return this.prisma.task.create({
+      data: {
+        userId,
+        ...data,
+      },
+    });
   }
   update(id: number, data: UpdateTaskDto) {
     return this.prisma.task.update({

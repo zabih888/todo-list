@@ -14,6 +14,7 @@ model User {
   password   String
   createdAt DateTime @default(now())
   hashedRefreshToken String?
+  tasks     Task[]
 }
 
 model Category {
@@ -33,6 +34,9 @@ model Task {
   // categoryId is optional; a task may be uncategorised
   categoryId  Int?      
   category    Category? @relation(fields: [categoryId], references: [id])
+
+  userId      Int       // <-- Add this field
+  user        User      @relation(fields: [userId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
